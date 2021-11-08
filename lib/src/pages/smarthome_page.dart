@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, unused_local_variable
+
 import 'dart:developer';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:clay_containers/widgets/clay_container.dart';
@@ -17,36 +19,15 @@ class MyHomePage extends StatefulWidget {
 MqttServerClient? client;
 
 class _MyHomePageState extends State<MyHomePage> {
-  // High
-  final Map<String, HighlightedWord> _highlights = {
-    'on': HighlightedWord(
-      onTap: () => print('on'),
-      textStyle: const TextStyle(
-        color: Colors.blue,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    'off': HighlightedWord(
-      onTap: () => print('off'),
-      textStyle: const TextStyle(
-        color: Colors.red,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  };
-
   // voice
   late stt.SpeechToText _speech;
-  bool _isListening = false
-  ;
+  bool _isListening = false;
   String _text = 'on/off';
   double _confidence = 1.0;
 
-
-
   mqttConnect() async {
     //init client
-    client = new MqttServerClient('35.240.190.171', 'Flutter_test');
+    client = new MqttServerClient('35.240.190.171', 'Flutter_test_pp');
     client!.port = 1883;
     client!.keepAlivePeriod = 60;
     client!.autoReconnect = true;
@@ -190,15 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        TextHighlight(
-          text: _text,
-          words: _highlights,
-          textStyle: const TextStyle(
-            fontSize: 24.0,
-            color: Colors.white,
-            fontWeight: FontWeight.w400
-          ),
-        ),
+        Text(_text),
         air(),
         homerf()
       ])),
@@ -219,19 +192,31 @@ class _MyHomePageState extends State<MyHomePage> {
 // _listen
 
   void _listen() async {
-    log('$_isListening');
-    log('$_confidence');
-
-
+    // log('$_isListening');
+    // log('$_confidence');
 
     if (!_isListening) {
       log('yes');
 
       bool available = await _speech.initialize(
-        onStatus: (val) => print('onStatus: $val'),
-        onError: (val) => print('onError: $val'),
+        onStatus: (val) {
+          if (val == 'done') {
+            setState(() => _isListening = false);
 
+            print('onStatus: $val');
+          } else {
+            print('onStatus: $val');
+          }
+        },
+        onError: (val) {
+          log('stop');
+          log('keywoed : $_text');
+          _speech.stop();
+          speech_MQTT(_text);
+          print('onError: $val');
+        },
       );
+
       log('$available');
       if (available) {
         log('yy');
@@ -241,17 +226,69 @@ class _MyHomePageState extends State<MyHomePage> {
             _text = val.recognizedWords;
             if (val.hasConfidenceRating && val.confidence > 0) {
               _confidence = val.confidence;
+
+              log('keywoed : $_text');
+              log('stop');
+
+              _speech.stop();
+              speech_MQTT(_text);
             }
           }),
         );
       }
     } else {
-      log('n');
-
+      log('stop');
       setState(() => _isListening = false);
       _speech.stop();
     }
   }
+
+  void speech_MQTT(String? keyword) {
+    log('speech_MQTT');
+    bool check = false;
+    String? mes;
+    if (keyword == '' || keyword == null) {
+    } else {
+      switch (keyword) {
+        case 'เปิด':
+          {
+            check = true;
+            mes = '25LY';
+          }
+
+          break;
+        case 'ปิด':
+          {
+            check = true;
+            mes = 'off';
+          }
+
+          break;
+        default:
+          {
+            check = false;
+          }
+      }
+      if (check == true) {
+        if (mes == '25LY') {
+          publishAir(25, 1.0, true);
+        } else if (mes == 'off') {
+          publishAirS('OFF');
+        }
+      } else {
+        log('cc');
+      }
+    }
+  }
+
+  void publishAirS(String mes) {
+    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+
+    builder.addString(mes);
+    client!.publishMessage('/IRDD', MqttQos.exactlyOnce, builder.payload!);
+    log(mes);
+  }
+
 //Air
 
   air() {
