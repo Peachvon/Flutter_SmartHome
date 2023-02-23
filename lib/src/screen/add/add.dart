@@ -136,9 +136,10 @@ class _AddItemState extends State<AddItem> {
   }
 
   DeviceModel? Device;
+
   Future AddDevice() async {
-    var url = Uri.parse(
-        'http://localhost:3001/add_item?model=${typeValue}&id=${codeController.text}&password=${passwordController.text}');
+    Uri url = Uri.parse(
+        'http://35.240.190.171:3001/api/add_item_tomobile?model=${typeValue}&id=${codeController.text}&password=${passwordController.text}');
     var response = await http.get(url);
     print(response.body);
     if (response.statusCode == 200) {
