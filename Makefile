@@ -1,4 +1,4 @@
 get:
-	flutter pub get
+	fvm flutter pub get
 dev:
-	flutter run -devib/main_dev.dart
+	fvm flutter run lib/main.dart

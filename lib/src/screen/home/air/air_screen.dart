@@ -5,7 +5,6 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:smarthome/src/config/theme.dart' as custom_theme;
 import 'package:smarthome/src/screen/shared_widget.dart';
 import 'package:smarthome/src/service/mqtt_connect/matt_connect.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:avatar_glow/avatar_glow.dart';
 
 class AirScreen extends StatefulWidget {
@@ -31,7 +30,7 @@ void x() {
 }
 
 class _AirScreenState extends State<AirScreen> {
-  late stt.SpeechToText _speech;
+  // late stt.SpeechToText _speech;
   bool _isListening = false;
   Color _ColorStatusConnec = Colors.red;
   int _temp = 25;
@@ -66,7 +65,7 @@ class _AirScreenState extends State<AirScreen> {
   @override
   void initState() {
     super.initState();
-    _speech = stt.SpeechToText();
+    // _speech = stt.SpeechToText();
     setMQTT();
   }
 
@@ -172,7 +171,7 @@ class _AirScreenState extends State<AirScreen> {
               Spacer(flex: 7),
             ],
           ),
-          mic(),
+          // mic(),
         ],
       ),
     );
@@ -439,268 +438,268 @@ class _AirScreenState extends State<AirScreen> {
     );
   }
 
-  Container mic() {
-    return Container(
-      alignment: Alignment.topRight,
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: AvatarGlow(
-        endRadius: 50.0,
-        glowColor: custom_theme.Theme.MainTheme,
-        animate: _isListening,
-        duration: const Duration(milliseconds: 2000),
-        repeatPauseDuration: const Duration(milliseconds: 100),
-        repeat: true,
-        child: FloatingActionButton(
-          backgroundColor: custom_theme.Theme.MainTheme,
-          foregroundColor: Colors.white,
-          onPressed: _listen,
-          child: Icon(_isListening ? Icons.mic : Icons.mic_none),
-        ),
-      ),
-    );
-  }
+  // Container mic() {
+  //   return Container(
+  //     alignment: Alignment.topRight,
+  //     height: MediaQuery.of(context).size.height,
+  //     width: MediaQuery.of(context).size.width,
+  //     child: AvatarGlow(
+  //       endRadius: 50.0,
+  //       glowColor: custom_theme.Theme.MainTheme,
+  //       animate: _isListening,
+  //       duration: const Duration(milliseconds: 2000),
+  //       repeatPauseDuration: const Duration(milliseconds: 100),
+  //       repeat: true,
+  //       child: FloatingActionButton(
+  //         backgroundColor: custom_theme.Theme.MainTheme,
+  //         foregroundColor: Colors.white,
+  //         onPressed: _listen,
+  //         child: Icon(_isListening ? Icons.mic : Icons.mic_none),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   String _text = '';
   double _confidence = 1.0;
-  void _listen() async {
-    // log('$_isListening');
-    // log('$_confidence');
+//   void _listen() async {
+//     // log('$_isListening');
+//     // log('$_confidence');
 
-    if (!_isListening) {
-      print('yes');
+//     if (!_isListening) {
+//       print('yes');
 
-      bool available = await _speech.initialize(
-        onStatus: (val) {
-          if (val == 'done') {
-            setState(() => _isListening = false);
+//       bool available = await _speech.initialize(
+//         onStatus: (val) {
+//           if (val == 'done') {
+//             setState(() => _isListening = false);
 
-            print('onStatuss: $val');
-          } else {
-            print('onStatussss: $val');
-          }
-        },
-        onError: (val) {
-          print('stop');
-          print('keywoed : $_text');
-          _speech.stop();
-          speech_MQTT(_text);
-          print('onError: $val');
-        },
-      );
+//             print('onStatuss: $val');
+//           } else {
+//             print('onStatussss: $val');
+//           }
+//         },
+//         onError: (val) {
+//           print('stop');
+//           print('keywoed : $_text');
+//           _speech.stop();
+//           speech_MQTT(_text);
+//           print('onError: $val');
+//         },
+//       );
 
-      print('$available');
-      if (available) {
-        print('yy');
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (val) {
-            print('OKYESSER');
+//       print('$available');
+//       if (available) {
+//         print('yy');
+//         setState(() => _isListening = true);
+//         _speech.listen(
+//           onResult: (val) {
+//             print('OKYESSER');
 
-            setState(
-              () {
-                _text = val.recognizedWords;
-                print('_text >>>>>>>>${_text}');
-                print('confidence >>>>>>>>${val.confidence}');
-                print('hasConfidenceRating >>>>>>>>${val.hasConfidenceRating}');
-                if (val.hasConfidenceRating == true) {
-                  _confidence = val.confidence;
-                  print('$_confidence');
-                  print('keywoed : $_text');
-                  print('stop');
-                  _isListening = false;
-                  _speech.stop();
+//             setState(
+//               () {
+//                 _text = val.recognizedWords;
+//                 print('_text >>>>>>>>${_text}');
+//                 print('confidence >>>>>>>>${val.confidence}');
+//                 print('hasConfidenceRating >>>>>>>>${val.hasConfidenceRating}');
+//                 if (val.hasConfidenceRating == true) {
+//                   _confidence = val.confidence;
+//                   print('$_confidence');
+//                   print('keywoed : $_text');
+//                   print('stop');
+//                   _isListening = false;
+//                   _speech.stop();
 
-                  speech_MQTT(_text);
-                }
-              },
-            );
-          },
-        );
-      }
-    } else {
-      print('stop');
-      setState(() => _isListening = false);
-      _speech.stop();
+//                   speech_MQTT(_text);
+//                 }
+//               },
+//             );
+//           },
+//         );
+//       }
+//     } else {
+//       print('stop');
+//       setState(() => _isListening = false);
+//       _speech.stop();
 
-      print('$_text');
-    }
-  }
+//       print('$_text');
+//     }
+//   }
 
-  void speech_MQTT(String? keyword) {
-    keyword = keyword?.toLowerCase();
-    print('speech_MQTT');
-    bool check = false;
-    String? mes;
-    if (keyword == '' || keyword == null) {
-      print('>>> null');
-    } else {
-      switch (keyword) {
-        case 'on':
-          {
-            _valueTemp = 25;
+//   void speech_MQTT(String? keyword) {
+//     keyword = keyword?.toLowerCase();
+//     print('speech_MQTT');
+//     bool check = false;
+//     String? mes;
+//     if (keyword == '' || keyword == null) {
+//       print('>>> null');
+//     } else {
+//       switch (keyword) {
+//         case 'on':
+//           {
+//             _valueTemp = 25;
 
-            _temp = 25;
-            sendMqtt(25, 1.0, true);
-          }
-          break;
-        case 'เปิด':
-          {
-            _valueTemp = 25;
+//             _temp = 25;
+//             sendMqtt(25, 1.0, true);
+//           }
+//           break;
+//         case 'เปิด':
+//           {
+//             _valueTemp = 25;
 
-            _temp = 25;
-            sendMqtt(25, 1.0, true);
-          }
-          break;
-        case 'off':
-          {
-            publish(widget.topic, 'DOFF');
-          }
-          break;
-        case 'ปิด':
-          {
-            publish(widget.topic, 'DOFF');
-          }
-          break;
-        case '18':
-          {
-            _temp = 18;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
-          break;
-        case '17':
-          {
-            _temp = 18;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
-          break;
-        case '19':
-          {
-            _temp = 19;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
-          break;
-        case '20':
-          {
-            _temp = 20;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
-          break;
-        case '21':
-          {
-            _temp = 21;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//             _temp = 25;
+//             sendMqtt(25, 1.0, true);
+//           }
+//           break;
+//         case 'off':
+//           {
+//             publish(widget.topic, 'DOFF');
+//           }
+//           break;
+//         case 'ปิด':
+//           {
+//             publish(widget.topic, 'DOFF');
+//           }
+//           break;
+//         case '18':
+//           {
+//             _temp = 18;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
+//           break;
+//         case '17':
+//           {
+//             _temp = 18;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
+//           break;
+//         case '19':
+//           {
+//             _temp = 19;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
+//           break;
+//         case '20':
+//           {
+//             _temp = 20;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
+//           break;
+//         case '21':
+//           {
+//             _temp = 21;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case '22':
-          {
-            _temp = 22;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case '22':
+//           {
+//             _temp = 22;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case '23':
-          {
-            _temp = 23;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case '23':
+//           {
+//             _temp = 23;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case '24':
-          {
-            _temp = 24;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case '24':
+//           {
+//             _temp = 24;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case '25':
-          {
-            _temp = 25;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case '25':
+//           {
+//             _temp = 25;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case '26':
-          {
-            _temp = 26;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case '26':
+//           {
+//             _temp = 26;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case '27':
-          {
-            _temp = 27;
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case '27':
+//           {
+//             _temp = 27;
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case 'สูง':
-          {
-            _valueFan = 3;
-            _labelFan = 'High';
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case 'สูง':
+//           {
+//             _valueFan = 3;
+//             _labelFan = 'High';
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case 'กลาง':
-          {
-            _valueFan = 2;
-            _labelFan = 'Medium';
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case 'กลาง':
+//           {
+//             _valueFan = 2;
+//             _labelFan = 'Medium';
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case 'ต่ำ':
-          {
-            _valueFan = 1;
-            _labelFan = 'Low';
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case 'ต่ำ':
+//           {
+//             _valueFan = 1;
+//             _labelFan = 'Low';
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case 'High':
-          {
-            _valueFan = 3;
-            _labelFan = 'High';
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case 'High':
+//           {
+//             _valueFan = 3;
+//             _labelFan = 'High';
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case 'Medium':
-          {
-            _valueFan = 2;
-            _labelFan = 'Medium';
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case 'Medium':
+//           {
+//             _valueFan = 2;
+//             _labelFan = 'Medium';
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        case 'Low':
-          {
-            _valueFan = 1;
-            _labelFan = 'Low';
-            sendMqtt(_temp, _valueFan, _swing);
-          }
+//           break;
+//         case 'Low':
+//           {
+//             _valueFan = 1;
+//             _labelFan = 'Low';
+//             sendMqtt(_temp, _valueFan, _swing);
+//           }
 
-          break;
-        default:
-          {
-            check = false;
-          }
-      }
-      setState(() {});
-      // if (check == true) {
-      //   print('>>> Notnull');
-      //   if (mes == 'on') {
-      //     sendMqtt(25, 1.0, true);
-      //   } else if (mes == 'off') {
-      //     //    publishAirS('OFF');
-      //   } else {
-      //     print(mes);
-      //   }
-      // } else {
-      //   print('cc');
-      // }
-    }
-  }
+//           break;
+//         default:
+//           {
+//             check = false;
+//           }
+//       }
+//       setState(() {});
+//       // if (check == true) {
+//       //   print('>>> Notnull');
+//       //   if (mes == 'on') {
+//       //     sendMqtt(25, 1.0, true);
+//       //   } else if (mes == 'off') {
+//       //     //    publishAirS('OFF');
+//       //   } else {
+//       //     print(mes);
+//       //   }
+//       // } else {
+//       //   print('cc');
+//       // }
+//     }
+//   }
 }

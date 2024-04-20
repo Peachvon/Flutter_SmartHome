@@ -7,7 +7,6 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:smarthome/src/config/theme.dart' as custom_theme;
 import 'package:smarthome/src/screen/shared_widget.dart';
 import 'package:smarthome/src/service/mqtt_connect/matt_connect.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -30,7 +29,7 @@ class DoorScreen extends StatefulWidget {
 }
 
 class _DoorScreenState extends State<DoorScreen> {
-  late stt.SpeechToText _speech;
+  // late stt.SpeechToText _speech;
   bool _isListening = false;
   Color _ColorStatusConnec = Colors.red;
   int showPercent = 0;
@@ -84,7 +83,7 @@ class _DoorScreenState extends State<DoorScreen> {
     //   // channel.sink.close(status.goingAway);
     // });
     super.initState();
-    _speech = stt.SpeechToText();
+    // _speech = stt.SpeechToText();
     setMQTT();
   }
 
@@ -132,7 +131,7 @@ class _DoorScreenState extends State<DoorScreen> {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        title: Text('$_text'),
+        title: Text('door'),
         leading: InkWell(
           onTap: () {
             disconnectMqtt();
@@ -187,7 +186,7 @@ class _DoorScreenState extends State<DoorScreen> {
               Spacer(flex: 7),
             ],
           ),
-          mic(),
+          // mic(),
         ],
       ),
     );
@@ -456,175 +455,175 @@ class _DoorScreenState extends State<DoorScreen> {
     );
   }
 
-  Container mic() {
-    return Container(
-      alignment: Alignment.topRight,
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: AvatarGlow(
-        endRadius: 50.0,
-        glowColor: custom_theme.Theme.MainTheme,
-        animate: _isListening,
-        duration: const Duration(milliseconds: 2000),
-        repeatPauseDuration: const Duration(milliseconds: 100),
-        repeat: true,
-        child: FloatingActionButton(
-          backgroundColor: custom_theme.Theme.MainTheme,
-          foregroundColor: Colors.white,
-          onPressed: _listen,
-          child: Icon(_isListening ? Icons.mic : Icons.mic_none),
-        ),
-      ),
-    );
-  }
+  // Container mic() {
+  //   return Container(
+  //     alignment: Alignment.topRight,
+  //     height: MediaQuery.of(context).size.height,
+  //     width: MediaQuery.of(context).size.width,
+  //     child: AvatarGlow(
+  //       endRadius: 50.0,
+  //       glowColor: custom_theme.Theme.MainTheme,
+  //       animate: _isListening,
+  //       duration: const Duration(milliseconds: 2000),
+  //       repeatPauseDuration: const Duration(milliseconds: 100),
+  //       repeat: true,
+  //       child: FloatingActionButton(
+  //         backgroundColor: custom_theme.Theme.MainTheme,
+  //         foregroundColor: Colors.white,
+  //         onPressed: _listen,
+  //         child: Icon(_isListening ? Icons.mic : Icons.mic_none),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  String _text = '';
-  double _confidence = 1.0;
-  void _listen() async {
-    // log('$_isListening');
-    // log('$_confidence');
+  // String _text = '';
+  // double _confidence = 1.0;
+  // void _listen() async {
+  //   // log('$_isListening');
+  //   // log('$_confidence');
 
-    if (!_isListening) {
-      print('yes');
+  //   if (!_isListening) {
+  //     print('yes');
 
-      bool available = await _speech.initialize(
-        onStatus: (val) {
-          if (val == 'done') {
-            setState(() => _isListening = false);
+  //     bool available = await _speech.initialize(
+  //       onStatus: (val) {
+  //         if (val == 'done') {
+  //           setState(() => _isListening = false);
 
-            print('onStatuss: $val');
-          } else {
-            print('onStatussss: $val');
-          }
-        },
-        onError: (val) {
-          print('stop');
-          print('keywoed : $_text');
-          _speech.stop();
-          speech_MQTT(_text);
-          print('onError: $val');
-        },
-      );
+  //           print('onStatuss: $val');
+  //         } else {
+  //           print('onStatussss: $val');
+  //         }
+  //       },
+  //       onError: (val) {
+  //         print('stop');
+  //         print('keywoed : $_text');
+  //         _speech.stop();
+  //         speech_MQTT(_text);
+  //         print('onError: $val');
+  //       },
+  //     );
 
-      print('$available');
-      if (available) {
-        print('yy');
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (val) {
-            print('OKYESSER');
+  //     print('$available');
+  //     if (available) {
+  //       print('yy');
+  //       setState(() => _isListening = true);
+  //       _speech.listen(
+  //         onResult: (val) {
+  //           print('OKYESSER');
 
-            setState(
-              () {
-                _text = val.recognizedWords;
-                print('_text >>>>>>>>${_text}');
-                print('confidence >>>>>>>>${val.confidence}');
-                print('hasConfidenceRating >>>>>>>>${val.hasConfidenceRating}');
-                if (val.hasConfidenceRating == true) {
-                  _confidence = val.confidence;
-                  print('$_confidence');
-                  print('keywoed : $_text');
-                  print('stop');
-                  _isListening = false;
-                  _speech.stop();
+  //           setState(
+  //             () {
+  //               _text = val.recognizedWords;
+  //               print('_text >>>>>>>>${_text}');
+  //               print('confidence >>>>>>>>${val.confidence}');
+  //               print('hasConfidenceRating >>>>>>>>${val.hasConfidenceRating}');
+  //               if (val.hasConfidenceRating == true) {
+  //                 _confidence = val.confidence;
+  //                 print('$_confidence');
+  //                 print('keywoed : $_text');
+  //                 print('stop');
+  //                 _isListening = false;
+  //                 _speech.stop();
 
-                  speech_MQTT(_text);
-                }
-              },
-            );
-          },
-        );
-      }
-    } else {
-      print('stop');
-      setState(() => _isListening = false);
-      _speech.stop();
+  //                 speech_MQTT(_text);
+  //               }
+  //             },
+  //           );
+  //         },
+  //       );
+  //     }
+  //   } else {
+  //     print('stop');
+  //     setState(() => _isListening = false);
+  //     _speech.stop();
 
-      print('$_text');
-    }
-  }
+  //     print('$_text');
+  //   }
+  // }
 
-  void speech_MQTT(String? keyword) {
-    keyword = keyword?.toLowerCase();
-    print('speech_MQTT');
-    bool check = false;
-    String? mes;
-    if (keyword == '' || keyword == null) {
-      print('>>> null');
-    } else {
-      switch (keyword) {
-        case 'zero':
-          {
-            if (_valueSensorPercent > 1) {
-              publish(widget.topic, 'Fix0R');
-            } else {}
-            _valueDoorPercen = 1;
-          }
-          break;
-        case '0':
-          {
-            if (_valueSensorPercent > 1) {
-              publish(widget.topic, 'Fix0R');
-            } else {}
-            _valueDoorPercen = 1;
-          }
-          break;
-        case '25':
-          {
-            if (_valueSensorPercent < 2) {
-              publish(widget.topic, 'Fix25F');
-            } else if (_valueSensorPercent > 2) {
-              publish(widget.topic, 'Fix25R');
-            }
-            _valueDoorPercen = 2;
-          }
-          break;
-        case '50':
-          {
-            if (_valueSensorPercent < 3) {
-              publish(widget.topic, 'Fix50F');
-            } else if (_valueSensorPercent > 3) {
-              publish(widget.topic, 'Fix50R');
-            }
-            _valueDoorPercen = 3;
-          }
-          break;
-        case '75':
-          {
-            if (_valueSensorPercent < 4) {
-              publish(widget.topic, 'Fix75F');
-            } else if (_valueSensorPercent > 4) {
-              publish(widget.topic, 'Fix75R');
-            }
-            _valueDoorPercen = 4;
-          }
-          break;
-        case '100':
-          {
-            if (_valueSensorPercent < 5) {
-              publish(widget.topic, 'Fix100F');
-            } else {}
-            _valueDoorPercen = 5;
-          }
-          break;
-        default:
-          {
-            check = false;
-          }
-      }
-      setState(() {});
-      // if (check == true) {
-      //   print('>>> Notnull');
-      //   if (mes == 'on') {
-      //     sendMqtt(25, 1.0, true);
-      //   } else if (mes == 'off') {
-      //     //    publishAirS('OFF');
-      //   } else {
-      //     print(mes);
-      //   }
-      // } else {
-      //   print('cc');
-      // }
-    }
-  }
+  // void speech_MQTT(String? keyword) {
+  //   keyword = keyword?.toLowerCase();
+  //   print('speech_MQTT');
+  //   bool check = false;
+  //   String? mes;
+  //   if (keyword == '' || keyword == null) {
+  //     print('>>> null');
+  //   } else {
+  //     switch (keyword) {
+  //       case 'zero':
+  //         {
+  //           if (_valueSensorPercent > 1) {
+  //             publish(widget.topic, 'Fix0R');
+  //           } else {}
+  //           _valueDoorPercen = 1;
+  //         }
+  //         break;
+  //       case '0':
+  //         {
+  //           if (_valueSensorPercent > 1) {
+  //             publish(widget.topic, 'Fix0R');
+  //           } else {}
+  //           _valueDoorPercen = 1;
+  //         }
+  //         break;
+  //       case '25':
+  //         {
+  //           if (_valueSensorPercent < 2) {
+  //             publish(widget.topic, 'Fix25F');
+  //           } else if (_valueSensorPercent > 2) {
+  //             publish(widget.topic, 'Fix25R');
+  //           }
+  //           _valueDoorPercen = 2;
+  //         }
+  //         break;
+  //       case '50':
+  //         {
+  //           if (_valueSensorPercent < 3) {
+  //             publish(widget.topic, 'Fix50F');
+  //           } else if (_valueSensorPercent > 3) {
+  //             publish(widget.topic, 'Fix50R');
+  //           }
+  //           _valueDoorPercen = 3;
+  //         }
+  //         break;
+  //       case '75':
+  //         {
+  //           if (_valueSensorPercent < 4) {
+  //             publish(widget.topic, 'Fix75F');
+  //           } else if (_valueSensorPercent > 4) {
+  //             publish(widget.topic, 'Fix75R');
+  //           }
+  //           _valueDoorPercen = 4;
+  //         }
+  //         break;
+  //       case '100':
+  //         {
+  //           if (_valueSensorPercent < 5) {
+  //             publish(widget.topic, 'Fix100F');
+  //           } else {}
+  //           _valueDoorPercen = 5;
+  //         }
+  //         break;
+  //       default:
+  //         {
+  //           check = false;
+  //         }
+  //     }
+  //     setState(() {});
+  //     // if (check == true) {
+  //     //   print('>>> Notnull');
+  //     //   if (mes == 'on') {
+  //     //     sendMqtt(25, 1.0, true);
+  //     //   } else if (mes == 'off') {
+  //     //     //    publishAirS('OFF');
+  //     //   } else {
+  //     //     print(mes);
+  //     //   }
+  //     // } else {
+  //     //   print('cc');
+  //     // }
+  //   }
+  // }
 }
